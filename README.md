@@ -1,6 +1,6 @@
 # BetterMD - 专业的Markdown美化器
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![React](https://img.shields.io/badge/React-18.2.0-61DAFB.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100.0-009688.svg)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB.svg)
@@ -180,7 +180,7 @@ ENV=development
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+本项目采用 [MIT 许可证](LICENSE) - 详情请查看许可证文件。
 
 ## 🙏 致谢
 
@@ -191,7 +191,7 @@ ENV=development
 
 ## 📞 联系我们
 
-- 📧 Email: [your-email@example.com](mailto:your-email@example.com)
+- 📧 Email: [294215988@qq.com](294215988@qq.com)
 - 🐛 Issues: [GitHub Issues](https://github.com/Reject-Reality/bettermd/issues)
 - 💬 Discussions: [GitHub Discussions](https://github.com/Reject-Reality/bettermd/discussions)
 
