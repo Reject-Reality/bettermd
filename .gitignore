@@ -154,3 +154,21 @@ storybook-static
 *.yml
 !k8s/*.yaml
 !k8s/*.yml
+
+
+# Development documentation (local only)
+CLAUDE.md
+requirements_analysis.md
+technical_architecture.md
+
+# Test scripts (local only)
+test_*.py
+test_api.bat
+
+# Temporary build files
+backend/*.tmp
+backend/temp.*
+
+# Claude Code settings
+.claude/
+
