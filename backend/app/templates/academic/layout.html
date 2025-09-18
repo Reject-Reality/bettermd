@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: "Times New Roman", "SimSun", serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            color: #333;
+        }
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background: white;
+            border: 1px solid #ddd;
+        }
+        .title-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #333;
+        }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: normal;
+            margin: 0;
+            color: #333;
+        }
+        h2 {
+            font-size: 1.6rem;
+            font-weight: normal;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.5rem;
+        }
+        h3 {
+            font-size: 1.3rem;
+            font-weight: normal;
+            margin-top: 1.8rem;
+            margin-bottom: 0.8rem;
+            color: #333;
+        }
+        .abstract {
+            background: #f5f5f5;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 4px solid #333;
+            font-style: italic;
+        }
+        .abstract h3 {
+            margin-top: 0;
+            font-style: normal;
+        }
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+            font-size: 1rem;
+        }
+        code {
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 2px;
+            font-family: "Courier New", monospace;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 0;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: "Courier New", monospace;
+            font-size: 0.9rem;
+        }
+        blockquote {
+            border-left: 3px solid #333;
+            margin: 1rem 0;
+            padding-left: 1rem;
+            color: #666;
+        }
+        .references {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #333;
+        }
+        .references h2 {
+            margin-top: 0;
+        }
+        .reference-item {
+            margin-bottom: 0.8rem;
+            padding-left: 1rem;
+            text-indent: -1rem;
+        }
+        .author-info {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #666;
+        }
+        .date {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        .math {
+            font-family: "Times New Roman", serif;
+            font-style: italic;
+            background: #f9f9f9;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+        }
+        .figure {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        .figure img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+        }
+        .figure-caption {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                border: none;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-section">
+            <h1>{{ title }}</h1>
+            <div class="author-info">作者：BetterMD</div>
+            <div class="date">2024年1月</div>
+        </div>
+        {{ content|safe }}
+        <div class="references">
+            <h2>参考文献</h2>
+            <div class="reference-item">[1] BetterMD Documentation. 2024.</div>
+            <div class="reference-item">[2] Markdown Specification. John Gruber, 2004.</div>
+        </div>
+    </div>
+</body>
+</html>

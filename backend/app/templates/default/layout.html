@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            min-height: 100vh;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #333;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 0.5rem;
+        }
+        h2 {
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.3rem;
+        }
+        p {
+            margin-bottom: 1rem;
+            color: #555;
+        }
+        code {
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: "Consolas", "Monaco", monospace;
+        }
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        blockquote {
+            border-left: 4px solid #007bff;
+            margin: 1rem 0;
+            padding-left: 1rem;
+            color: #6c757d;
+        }
+        ul, ol {
+            margin-bottom: 1rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .task-item input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+        .math {
+            background: #f0f8ff;
+            padding: 0.5rem;
+            border-radius: 3px;
+            font-family: "Times New Roman", serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {{ content|safe }}
+    </div>
+</body>
+</html>
