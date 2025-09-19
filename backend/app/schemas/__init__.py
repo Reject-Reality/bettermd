@@ -8,6 +8,7 @@ class MarkdownProcessRequest(BaseModel):
 class MarkdownProcessResponse(BaseModel):
     filename: str
     html_content: str
+    markdown_content: str
     template: Optional[str] = None
 
 class TemplateInfo(BaseModel):
