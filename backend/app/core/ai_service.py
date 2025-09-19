@@ -17,35 +17,54 @@ class AIService:
 
     def __init__(self):
         """初始化AI服务"""
+        # 阿里云百炼配置
+        self.aliyun_api_key = os.getenv("ALIYUN_API_KEY")
+        self.aliyun_base_url = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
+
+        # 智谱AI配置（保留作为备用）
         self.zhipu_api_key = os.getenv("ZHIPU_API_KEY")
         self.zhipu_base_url = "https://open.bigmodel.cn/api/paas/v4"
 
-        # 初始化智谱AI客户端
-        if self.zhipu_api_key:
+        # 初始化阿里云百炼客户端
+        if self.aliyun_api_key:
+            self.aliyun_headers = {
+                "Authorization": f"Bearer {self.aliyun_api_key}",
+                "Content-Type": "application/json"
+            }
+            self.model = "qwen-plus"  # 使用Qwen模型
+            self.provider = "aliyun"
+        elif self.zhipu_api_key:
             self.zhipu_headers = {
                 "Authorization": f"Bearer {self.zhipu_api_key}",
                 "Content-Type": "application/json"
             }
             self.model = "glm-4-0520"  # 使用GLM-4模型
+            self.provider = "zhipu"
         else:
+            self.aliyun_headers = None
             self.zhipu_headers = None
             self.model = None
-            logger.warning("Zhipu API key not found. AI features will be disabled.")
-    
+            self.provider = None
+            logger.warning("No AI API key found. AI features will be disabled.")
+
     def is_available(self) -> bool:
         """检查AI服务是否可用"""
-        return self.zhipu_headers is not None
+        return self.aliyun_headers is not None or self.zhipu_headers is not None
 
     def get_available_models(self) -> List[str]:
         """获取可用的模型列表"""
         if not self.is_available():
             return []
 
-        return ["glm-4-0520", "glm-4", "glm-4-air", "glm-4-airx", "glm-3-turbo"]
+        if self.provider == "aliyun":
+            return ["qwen-plus", "qwen-turbo", "qwen-max", "qwen-max-longcontext", "qwen-7b-chat", "qwen-14b-chat"]
+        elif self.provider == "zhipu":
+            return ["glm-4-0520", "glm-4", "glm-4-air", "glm-4-airx", "glm-3-turbo"]
+        return []
     
     def chat_completion(self, messages: List[Dict[str, str]], model: str = None,
                        temperature: float = 0.7, max_tokens: Optional[int] = None) -> Optional[str]:
-        """使用智谱GLM进行聊天完成任务
+        """使用AI服务进行聊天完成任务
 
         Args:
             messages: 消息列表，格式为[{"role": "user", "content": "内容"}]
@@ -64,28 +83,59 @@ class AIService:
             model = self.model
 
         try:
-            payload = {
-                "model": model,
-                "messages": messages,
-                "temperature": temperature,
-            }
+            if self.provider == "aliyun":
+                # 阿里云百炼API调用
+                payload = {
+                    "model": model,
+                    "input": {
+                        "messages": messages
+                    },
+                    "parameters": {
+                        "temperature": temperature
+                    }
+                }
 
-            if max_tokens:
-                payload["max_tokens"] = max_tokens
+                if max_tokens:
+                    payload["parameters"]["max_tokens"] = max_tokens
 
-            response = requests.post(
-                f"{self.zhipu_base_url}/chat/completions",
-                headers=self.zhipu_headers,
-                json=payload,
-                timeout=60
-            )
+                response = requests.post(
+                    self.aliyun_base_url,
+                    headers=self.aliyun_headers,
+                    json=payload,
+                    timeout=60
+                )
 
-            if response.status_code == 200:
-                result = response.json()
-                return result.get("choices", [{}])[0].get("message", {}).get("content")
-            else:
-                logger.error(f"API request failed with status {response.status_code}: {response.text}")
-                return None
+                if response.status_code == 200:
+                    result = response.json()
+                    return result.get("output", {}).get("choices", [{}])[0].get("message", {}).get("content")
+                else:
+                    logger.error(f"Alibaba Cloud API request failed with status {response.status_code}: {response.text}")
+                    return None
+
+            elif self.provider == "zhipu":
+                # 智谱AI API调用
+                payload = {
+                    "model": model,
+                    "messages": messages,
+                    "temperature": temperature,
+                }
+
+                if max_tokens:
+                    payload["max_tokens"] = max_tokens
+
+                response = requests.post(
+                    f"{self.zhipu_base_url}/chat/completions",
+                    headers=self.zhipu_headers,
+                    json=payload,
+                    timeout=60
+                )
+
+                if response.status_code == 200:
+                    result = response.json()
+                    return result.get("choices", [{}])[0].get("message", {}).get("content")
+                else:
+                    logger.error(f"Zhipu API request failed with status {response.status_code}: {response.text}")
+                    return None
 
         except Exception as e:
             logger.error(f"Error in chat completion: {e}")

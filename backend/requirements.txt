@@ -11,3 +11,5 @@ weasyprint>=59.0
 requests>=2.28.0
 python-dotenv>=1.0.0
 sqlalchemy>=2.0.0
+# 阿里云百炼SDK
+dashscope>=1.20.0
