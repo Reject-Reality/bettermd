@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Layout, Row, Col, Typography, Card, Tabs } from 'antd';
 import FileUploader from '../components/FileUploader';
 import MarkdownPreview from '../components/MarkdownPreview';
 import TemplateSelector from '../components/TemplateSelector';
 import MarkdownEditor from '../components/MarkdownEditor';
+import SimpleMarkdownEditor from '../components/SimpleMarkdownEditor';
+import TestEditor from '../components/TestEditor';
 import BacklinkPanel from '../components/BacklinkPanel';
 import KnowledgeGraph from '../components/KnowledgeGraph';
 import PluginManager from '../components/PluginManager';
@@ -14,18 +17,31 @@ const { Title } = Typography;
 const { TabPane } = Tabs;
 
 const Editor = () => {
+  const location = useLocation();
   const [processedContent, setProcessedContent] = useState(null);
   const [filename, setFilename] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('default');
   const [editorContent, setEditorContent] = useState('');
   const [currentNote, setCurrentNote] = useState({ id: 1, title: '项目规划', content: '这是关于项目规划的笔记内容...', links: [2, 3] });
-  
+
   const { getEnabledPlugins } = usePlugins();
+
+  // 处理从Home页面传递过来的状态
+  useEffect(() => {
+    if (location.state && location.state.content) {
+      setProcessedContent(location.state.content);
+      setFilename(location.state.filename || '');
+      // 由于后端没有返回markdown_content，我们需要从原始文件中读取内容
+      // 暂时设置为空字符串，让编辑器显示默认提示文本
+      setEditorContent('');
+    }
+  }, [location.state]);
 
   const handleUploadSuccess = (data) => {
     setProcessedContent(data.html_content);
     setFilename(data.filename);
-    setEditorContent(data.markdown_content || '');
+    // 确保editorContent永远不会是undefined
+    setEditorContent(data.markdown_content || data.original_content || '');
   };
 
   const handleTemplateSelect = (templateName) => {
@@ -39,10 +55,20 @@ const Editor = () => {
   };
 
   const handleEditorChange = (value) => {
-    setEditorContent(value);
-    // 实时预览功能
-    // 在实际应用中，我们会调用API处理Markdown内容
-    console.log('Editor content changed:', value);
+    // 确保value是有效的Slate值数组，然后提取文本内容
+    if (value && Array.isArray(value)) {
+      // 从Slate值中提取纯文本内容用于存储
+      const textContent = value
+        .map(node => {
+          if (node.type === 'paragraph' && node.children) {
+            return node.children.map(child => child.text || '').join('');
+          }
+          return '';
+        })
+        .join('\n');
+      setEditorContent(textContent);
+      console.log('Editor content changed:', textContent);
+    }
   };
 
   const handleNoteSelect = (note) => {
@@ -76,10 +102,13 @@ const Editor = () => {
             </Card>
             
             <Card title="编辑器" style={{ marginTop: 20 }}>
-              <MarkdownEditor 
-                initialValue={editorContent}
+              <SimpleMarkdownEditor
+                initialValue={editorContent || ''}
                 onChange={handleEditorChange}
               />
+              <div style={{ marginTop: 10, fontSize: '12px', color: '#666' }}>
+                Debug: editorContent = "{editorContent}"
+              </div>
             </Card>
             
             {/* 插件管理面板 */}

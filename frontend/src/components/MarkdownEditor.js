@@ -11,20 +11,27 @@ import 'prismjs/components/prism-python';
 import 'prismjs/themes/prism.css';
 
 const MarkdownEditor = ({ initialValue, onChange }) => {
-  const [editor] = useState(() => withHistory(withReact(createEditor())));
+  console.log('MarkdownEditor: Rendering with initialValue:', initialValue);
+
+  // 创建一个稳定的编辑器实例
+  const editor = useMemo(() => {
+    console.log('MarkdownEditor: Creating editor instance');
+    const newEditor = withHistory(withReact(createEditor()));
+    return newEditor;
+  }, []);
+
   const [mathExpression, setMathExpression] = useState('');
-  
+
   // 扩展编辑器以支持自定义元素
   const editorWithExtensions = useMemo(() => {
-    const extendedEditor = editor;
-    
+    console.log('MarkdownEditor: Creating editor extensions');
     // 重写isVoid方法以支持checkbox
-    const { isVoid } = extendedEditor;
-    extendedEditor.isVoid = element => {
+    const { isVoid } = editor;
+    editor.isVoid = element => {
       return element.type === 'checkbox' ? true : isVoid(element);
     };
-    
-    return extendedEditor;
+
+    return editor;
   }, [editor]);
   
   const renderElement = useCallback(props => {
@@ -226,22 +233,58 @@ const MarkdownEditor = ({ initialValue, onChange }) => {
     }
   };
 
-  const initialValueContent = initialValue 
-    ? [{ type: 'paragraph', children: [{ text: initialValue }] }]
-    : [
+  // 确保初始值永远不会是undefined
+  const safeInitialValue = useMemo(() => {
+    console.log('MarkdownEditor: Processing initialValue:', initialValue);
+
+    // 确保永远返回有效的Slate值数组
+    let result;
+    if (!initialValue || typeof initialValue !== 'string' || initialValue.trim() === '') {
+      console.log('MarkdownEditor: Using default initial value');
+      result = [
         {
           type: 'paragraph',
           children: [{ text: '开始编辑你的Markdown内容...' }],
-        },
+        }
       ];
+    } else {
+      console.log('MarkdownEditor: Using provided initial value');
+      result = [
+        {
+          type: 'paragraph',
+          children: [{ text: initialValue }],
+        }
+      ];
+    }
+
+    console.log('MarkdownEditor: Final safeInitialValue:', JSON.stringify(result));
+    return result;
+  }, [initialValue]);
+
+  // 确保所有必需的值都已经准备就绪
+  if (!editorWithExtensions || !safeInitialValue) {
+    console.log('MarkdownEditor: Waiting for initialization - editor:', !!editorWithExtensions, 'value:', !!safeInitialValue);
+    return (
+      <Card title="Markdown编辑器">
+        <div style={{ padding: '50px', textAlign: 'center' }}>
+          <p>编辑器正在初始化...</p>
+          <p style={{ fontSize: '12px', color: '#666' }}>
+            Debug: Editor: {!!editorWithExtensions}, Value: {!!safeInitialValue}
+          </p>
+        </div>
+      </Card>
+    );
+  }
+
+  console.log('MarkdownEditor: Rendering Slate component with editor:', !!editorWithExtensions, 'value:', safeInitialValue);
 
   return (
-    <Card 
-      title="Markdown编辑器" 
+    <Card
+      title="Markdown编辑器"
       extra={
         <Space>
-          <Button 
-            size="small" 
+          <Button
+            size="small"
             onClick={() => {
               // 插入标题1
               Transforms.insertNodes(editor, {
@@ -252,8 +295,8 @@ const MarkdownEditor = ({ initialValue, onChange }) => {
           >
             H1
           </Button>
-          <Button 
-            size="small" 
+          <Button
+            size="small"
             onClick={() => {
               // 插入标题2
               Transforms.insertNodes(editor, {
@@ -264,8 +307,8 @@ const MarkdownEditor = ({ initialValue, onChange }) => {
           >
             H2
           </Button>
-          <Button 
-            size="small" 
+          <Button
+            size="small"
             onClick={() => {
               // 插入代码块
               Transforms.insertNodes(editor, {
@@ -276,8 +319,8 @@ const MarkdownEditor = ({ initialValue, onChange }) => {
           >
             代码块
           </Button>
-          <Button 
-            size="small" 
+          <Button
+            size="small"
             onClick={() => {
               // 插入任务列表
               Transforms.insertNodes(editor, {
@@ -295,14 +338,14 @@ const MarkdownEditor = ({ initialValue, onChange }) => {
             任务列表
           </Button>
           <Space>
-            <Input 
-              placeholder="输入LaTeX数学表达式" 
+            <Input
+              placeholder="输入LaTeX数学表达式"
               value={mathExpression}
               onChange={e => setMathExpression(e.target.value)}
               style={{ width: '150px' }}
             />
-            <Button 
-              size="small" 
+            <Button
+              size="small"
               onClick={insertMathExpression}
             >
               插入公式
@@ -311,11 +354,15 @@ const MarkdownEditor = ({ initialValue, onChange }) => {
         </Space>
       }
     >
-      <Slate 
-        editor={editorWithExtensions} 
-        initialValue={initialValueContent}
+      <Slate
+        editor={editorWithExtensions}
+        initialValue={safeInitialValue}
         onChange={value => {
-          onChange && onChange(value);
+          console.log('Slate onChange:', value);
+          // 确保传递给父组件的value永远不会是undefined
+          if (value && Array.isArray(value)) {
+            onChange && onChange(value);
+          }
         }}
       >
         <Editable

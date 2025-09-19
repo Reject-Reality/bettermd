@@ -13,8 +13,12 @@ const Home = () => {
   const [selectedTemplate, setSelectedTemplate] = useState('default');
 
   const handleUploadSuccess = (data) => {
-    // 上传成功后直接跳转到编辑器页面并传递处理后的内容
-    navigate('/editor', { state: { content: data.html_content, filename: data.filename } });
+    // 上传成功后显示成功消息，并提供查看选项
+    setTimeout(() => {
+      if (confirm('文件处理成功！是否前往编辑器查看？')) {
+        navigate('/editor', { state: { content: data.html_content, filename: data.filename } });
+      }
+    }, 500);
   };
 
   const handleTemplateSelect = (templateName) => {
