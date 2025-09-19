@@ -22,9 +22,10 @@ const Editor = () => {
 
   // 处理从Home页面传递过来的状态
   useEffect(() => {
-    if (location.state && location.state.content) {
+    if (location.state) {
       setFilename(location.state.filename || '');
       setEditorContent(location.state.markdown_content || '');
+      console.log('Editor received state:', location.state);
     }
   }, [location.state]);
 

@@ -18,7 +18,7 @@ const Home = () => {
       if (confirm('文件处理成功！是否前往编辑器查看？')) {
         navigate('/editor', {
           state: {
-            content: data.html_content,
+            html_content: data.html_content,
             filename: data.filename,
             markdown_content: data.markdown_content
           }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MDEditor from '@uiw/react-md-editor';
 import { Card, Button, Space, message } from 'antd';
-import { EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { EditOutlined, EyeOutlined, DownloadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 const ReactMDEditor = ({
@@ -16,6 +16,7 @@ const ReactMDEditor = ({
   const [htmlPreview, setHtmlPreview] = useState('');
   const [mode, setMode] = useState('edit'); // 'edit' or 'preview'
   const [loading, setLoading] = useState(false);
+  const [currentFilename, setCurrentFilename] = useState(filename || 'untitled.md');
 
   // 应用模板
   const applyTemplate = async (templateName) => {
@@ -85,6 +86,54 @@ const ReactMDEditor = ({
     }
   };
 
+  // 导出为Markdown文件
+  const exportAsMarkdown = () => {
+    if (!markdownContent.trim()) {
+      message.warning('没有内容可以导出');
+      return;
+    }
+
+    const blob = new Blob([markdownContent], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = currentFilename || 'document.md';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    message.success('Markdown文件导出成功');
+  };
+
+  // 导出为HTML文件
+  const exportAsHTML = async () => {
+    if (!markdownContent.trim()) {
+      message.warning('没有内容可以导出');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/markdown/process/raw', {
+        content: markdownContent,
+        template: currentTemplate
+      });
+
+      const htmlContent = response.data.html_content;
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = currentFilename.replace('.md', '.html') || 'document.html';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      message.success('HTML文件导出成功');
+    } catch (error) {
+      message.error('HTML导出失败: ' + (error.response?.data?.detail || error.message));
+    }
+  };
+
   // 切换模式
   const handleModeChange = (newMode) => {
     setMode(newMode);
@@ -95,7 +144,7 @@ const ReactMDEditor = ({
 
   return (
     <Card
-      title={`Markdown 编辑器 - ${filename || '未命名文档'}`}
+      title={`Markdown 编辑器 - ${currentFilename || '未命名文档'}`}
       extra={
         <Space>
           <Button
@@ -114,6 +163,20 @@ const ReactMDEditor = ({
             loading={loading}
           >
             预览
+          </Button>
+          <Button
+            size="small"
+            icon={<DownloadOutlined />}
+            onClick={exportAsMarkdown}
+          >
+            导出MD
+          </Button>
+          <Button
+            size="small"
+            icon={<DownloadOutlined />}
+            onClick={exportAsHTML}
+          >
+            导出HTML
           </Button>
         </Space>
       }
