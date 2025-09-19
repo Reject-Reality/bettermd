@@ -23,41 +23,45 @@ router = APIRouter()
 async def root():
     return {"message": "BetterMD API"}
 
-@router.post("/markdown/process", response_model=MarkdownProcessResponse)
+@router.post("/markdown/process")
 async def process_markdown_file(
     file: UploadFile = File(...),
     template: Optional[str] = Query("default", description="Template to apply to the processed Markdown")
 ):
     if not file.filename.endswith('.md'):
         raise HTTPException(status_code=400, detail="Only .md files are allowed")
-    
+
     try:
         content = await file.read()
         markdown_text = content.decode('utf-8')
         processed_html = process_markdown(markdown_text)
-        
+
         # 应用模板
         final_html = apply_template(processed_html, template)
-        
-        return MarkdownProcessResponse(
-            filename=file.filename,
-            html_content=final_html,
-            template=template
-        )
+
+        response_data = {
+            "filename": file.filename,
+            "html_content": final_html,
+            "markdown_content": markdown_text,
+            "template": template
+        }
+        print(f"返回数据: {list(response_data.keys())}")
+        return response_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
-@router.post("/markdown/process/raw", response_model=MarkdownProcessResponse)
+@router.post("/markdown/process/raw")
 async def process_markdown_raw(request: MarkdownProcessRequest):
     try:
         processed_html = process_markdown(request.content)
         final_html = apply_template(processed_html, request.template)
         
-        return MarkdownProcessResponse(
-            filename="raw_content.md",
-            html_content=final_html,
-            template=request.template
-        )
+        return {
+            "filename": "raw_content.md",
+            "html_content": final_html,
+            "markdown_content": request.content,
+            "template": request.template
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing content: {str(e)}")
 

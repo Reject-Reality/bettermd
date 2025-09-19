@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 创建axios实例
 const apiClient = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api',
+  baseURL: 'http://localhost:8000/api',
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
@@ -47,7 +47,13 @@ const aiAPI = {
 export const processMarkdownFile = async (file, template = 'default') => {
   try {
     const response = await markdownAPI.processFile(file, template);
-    return response.data;
+
+    // 添加文件内容
+    const fileContent = await file.text();
+    return {
+      ...response.data,
+      markdown_content: fileContent
+    };
   } catch (error) {
     throw new Error(error.response?.data?.detail || 'Failed to process markdown file');
   }

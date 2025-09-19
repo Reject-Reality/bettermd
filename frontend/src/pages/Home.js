@@ -16,7 +16,13 @@ const Home = () => {
     // 上传成功后显示成功消息，并提供查看选项
     setTimeout(() => {
       if (confirm('文件处理成功！是否前往编辑器查看？')) {
-        navigate('/editor', { state: { content: data.html_content, filename: data.filename } });
+        navigate('/editor', {
+          state: {
+            content: data.html_content,
+            filename: data.filename,
+            markdown_content: data.markdown_content
+          }
+        });
       }
     }, 500);
   };

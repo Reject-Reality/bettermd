@@ -15,12 +15,12 @@ BetterMD 是一款专业的 Markdown 文档美化工具，集成了 AI 智能辅
 - **自定义模板**: 支持用户上传和应用自定义模板
 - **一键美化**: 快速应用模板到文档
 
-### 📝 高级编辑器
-- **富文本编辑**: 基于 Slate.js 的强大编辑器
+### 📝 专业编辑器
+- **Markdown编辑**: 基于 @uiw/react-md-editor 的专业编辑器
+- **实时预览**: 编辑和预览模式无缝切换
 - **语法高亮**: 支持多种编程语言的代码高亮
-- **LaTeX公式**: 完整的数学公式支持
-- **任务列表**: 交互式任务管理
-- **双向链接**: Obsidian 风格的双链笔记功能
+- **工具栏**: 完整的 Markdown 格式化工具栏
+- **文件上传**: 支持 .md 文件上传和内容编辑
 
 ### 🤖 AI 智能辅助
 - **智能推荐**: AI 根据内容推荐最适合的模板
@@ -38,8 +38,8 @@ BetterMD 是一款专业的 Markdown 文档美化工具，集成了 AI 智能辅
 ### 前端技术栈
 - **React 18** - 现代化的用户界面框架
 - **Ant Design 5** - 企业级 UI 组件库
-- **Slate.js** - 强大的富文本编辑器框架
-- **styled-components** - CSS-in-JS 样式解决方案
+- **@uiw/react-md-editor** - 专业的 Markdown 编辑器组件
+- **Axios** - HTTP 客户端
 - **React Router** - 单页应用路由管理
 
 ### 后端技术栈
@@ -69,22 +69,39 @@ cd bettermd
 docker-compose up --build
 
 # 访问应用
-# 前端: http://localhost:3000
+# 前端: http://localhost:3001
 # 后端API: http://localhost:8000
 # API文档: http://localhost:8000/docs
 ```
 
-#### 方式二：本地开发
+#### 方式二：本地开发 (推荐)
 
-**前端启动**:
+**使用开发脚本** (最简单):
 ```bash
-cd frontend
-npm install
-npm start
+# 启动所有服务 (PowerShell - 推荐)
+.\start.ps1
+
+# 或者使用批处理文件
+start.bat
+
+# 查看服务状态
+.\status.ps1
+
+# 停止所有服务
+.\stop.ps1
+
+# 重启服务
+.\restart.ps1
 ```
 
-**后端启动**:
+**手动启动**:
 ```bash
+# 前端启动
+cd frontend
+npm install
+PORT=3001 npm start
+
+# 后端启动
 cd backend
 python -m venv venv
 # Windows:
@@ -92,7 +109,7 @@ venv\Scripts\activate
 # Linux/Mac:
 source venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --port 8000
 ```
 
 ## 📖 使用指南
@@ -105,9 +122,10 @@ uvicorn app.main:app --reload
 
 ### 2. 在线编辑
 1. 点击"打开编辑器"进入编辑界面
-2. 使用富文本编辑器创建或编辑内容
-3. 实时预览美化效果
-4. 支持切换不同模板查看效果
+2. 使用专业的 Markdown 编辑器创建或编辑内容
+3. 支持实时预览和编辑模式切换
+4. 可以上传 .md 文件或直接编辑内容
+5. 支持切换不同模板查看美化效果
 
 ### 3. AI 辅助功能
 1. 在编辑器中点击"AI工具"标签页
