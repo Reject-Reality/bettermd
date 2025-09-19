@@ -77,11 +77,59 @@ async def list_templates_info():
 
 @router.get("/templates/{template_name}", response_class=HTMLResponse)
 async def get_template_preview(template_name: str):
-    # 返回模板预览
-    html_content = f"""<h1>Template Preview</h1><p>This is a preview of the <strong>{template_name}</strong> template.</p><h2>Sample Content</h2><p>This is a sample paragraph to demonstrate the template styling.</p><h3>Code Example</h3><pre><code>function hello() {{
-  console.log('Hello, world!');
-}}</code></pre>"""
-    return apply_template(html_content, template_name)
+    """获取模板预览"""
+    try:
+        template_info = template_manager.get_template_info(template_name)
+        if not template_info:
+            raise HTTPException(status_code=404, detail="Template not found")
+
+        # 生成预览内容
+        preview_content = """# 示例文档标题
+
+## 这是一个二级标题
+
+这是一个段落的示例文本。这里有一些普通的文字内容，用于展示模板的样式效果。
+
+### 这是一个三级标题
+
+#### 特性展示：
+
+- **粗体文本**示例
+- *斜体文本*示例
+- `行内代码`示例
+- [链接示例](https://example.com)
+
+```python
+# 代码块示例
+def hello_world():
+    print("Hello, World!")
+    return True
+```
+
+> 这是一个引用块的示例文本。引用通常用于显示重要的信息或者引用他人的话。
+
+## 表格示例
+
+| 功能 | 状态 | 描述 |
+|------|------|------|
+| 编辑 | ✅ | 支持Markdown编辑 |
+| 预览 | ✅ | 实时预览功能 |
+| 导出 | ✅ | 支持多种格式导出 |
+
+## 任务列表
+
+- [x] 完成模板设计
+- [x] 实现预览功能
+- [ ] 添加更多模板
+- [ ] 优化用户体验
+"""
+
+        # 使用模板渲染预览内容
+        preview_html = template_manager.render_template(preview_content, template_name, "模板预览")
+
+        return preview_html
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/health")
 async def health_check():

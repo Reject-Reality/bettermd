@@ -209,8 +209,9 @@ const ReactMDEditor = ({
         <Space>
           <span>当前模板: {currentTemplate}</span>
           <Button size="small" onClick={() => applyTemplate('default')}>默认模板</Button>
-          <Button size="small" onClick={() => applyTemplate('academic')}>学术模板</Button>
+          <Button size="small" onClick={() => applyTemplate('modern')}>现代模板</Button>
           <Button size="small" onClick={() => applyTemplate('business')}>商务模板</Button>
+          <Button size="small" onClick={() => applyTemplate('academic')}>学术模板</Button>
           <Button size="small" onClick={() => applyTemplate('technical')}>技术模板</Button>
         </Space>
       </div>

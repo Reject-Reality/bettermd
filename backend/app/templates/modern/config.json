@@ -1,0 +1,32 @@
+{
+  "name": "modern",
+  "customizable": true,
+  "options": {
+    "primary_color": "#2563eb",
+    "secondary_color": "#64748b",
+    "accent_color": "#06b6d4",
+    "font_family": "Inter",
+    "font_size": "16px",
+    "line_height": "1.6",
+    "max_width": "1200px",
+    "border_radius": "0.75rem",
+    "show_toc": true,
+    "show_header": true,
+    "show_footer": true,
+    "theme": "light"
+  },
+  "default_values": {
+    "primary_color": "#2563eb",
+    "secondary_color": "#64748b",
+    "accent_color": "#06b6d4",
+    "font_family": "Inter",
+    "font_size": "16px",
+    "line_height": "1.6",
+    "max_width": "1200px",
+    "border_radius": "0.75rem",
+    "show_toc": true,
+    "show_header": true,
+    "show_footer": true,
+    "theme": "light"
+  }
+}
